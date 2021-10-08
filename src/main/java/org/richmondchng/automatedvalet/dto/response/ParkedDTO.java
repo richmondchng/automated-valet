@@ -7,7 +7,7 @@ import lombok.Setter;
 /**
  * DTO describing parking lot status.
  *
- * @author richmondchng 
+ * @author richmondchng
  */
 @Getter
 @Setter

@@ -57,7 +57,8 @@ class ParkingValetControllerTest {
     void enterParking_parkingAvailable_returnSuccess() {
         final String licensePlate = "ABC1234Z";
         final LocalDateTime timeIn = LocalDateTime.of(2021, 10, 8, 13, 10, 11);
-        final ParkingLot<Car> parked = ParkingLot.<Car>builder()
+        final ParkingLot parked = ParkingLot.builder()
+                .vehicleType(VehicleType.CAR)
                 .vehicle(new Car(licensePlate))
                 .timeIn(timeIn)
                 .label("CarLot1")

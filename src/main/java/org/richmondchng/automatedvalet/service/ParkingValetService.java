@@ -21,7 +21,7 @@ public class ParkingValetService {
      * @param timestamp timestamp entering parking
      * @return ParkingLot describing parking lot details, null if not parked
      */
-    public ParkingLot<? extends Vehicle> parkVehicle(final VehicleType vehicle, final String licensePlate, final LocalDateTime timestamp) {
+    public ParkingLot parkVehicle(final VehicleType vehicle, final String licensePlate, final LocalDateTime timestamp) {
         return null;
     }
 }
