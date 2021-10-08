@@ -1,6 +1,5 @@
 package org.richmondchng.automatedvalet.controller;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.richmondchng.automatedvalet.dto.response.ParkedDTO;
 import org.richmondchng.automatedvalet.model.parking.ParkingLot;
@@ -22,13 +21,13 @@ public class ParkingValetController {
     /**
      * Vehicle entering parking.
      * @param vehicle Vehicle Type
-     * @param licensePlate vehicle license plate
+     * @param vehicleNumber vehicle number
      * @param timestamp time stamp entering parking
      * @return ParkedDTO with parking lot details
      */
-    public ParkedDTO enterParking(final VehicleType vehicle, final String licensePlate, final LocalDateTime timestamp) {
+    public ParkedDTO enterParking(final VehicleType vehicle, final String vehicleNumber, final LocalDateTime timestamp) {
 
-        final ParkingLot parked = parkingValetService.parkVehicle(vehicle, licensePlate, timestamp);
+        final ParkingLot parked = parkingValetService.parkVehicle(vehicle, vehicleNumber, timestamp);
         if(parked != null) {
             // a parking lot is allocated
             return new ParkedDTO(true, parked.getLabel());

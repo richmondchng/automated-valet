@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.richmondchng.automatedvalet.dto.response.ParkedDTO;
 import org.richmondchng.automatedvalet.model.parking.ParkingLot;
-import org.richmondchng.automatedvalet.model.vehicle.Car;
+import org.richmondchng.automatedvalet.model.vehicle.Vehicle;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 import org.richmondchng.automatedvalet.service.ParkingValetService;
 
@@ -55,20 +55,20 @@ class ParkingValetControllerTest {
      */
     @Test
     void enterParking_parkingAvailable_returnSuccess() {
-        final String licensePlate = "ABC1234Z";
+        final String vehicleNumber = "ABC1234Z";
         final LocalDateTime timeIn = LocalDateTime.of(2021, 10, 8, 13, 10, 11);
         final ParkingLot parked = ParkingLot.builder()
                 .vehicleType(VehicleType.CAR)
-                .vehicle(new Car(licensePlate))
+                .vehicle(new Vehicle(VehicleType.CAR, vehicleNumber))
                 .timeIn(timeIn)
                 .label("CarLot1")
                 .build();
         doReturn(parked).when(parkingValetService)
                 .parkVehicle(any(VehicleType.class), anyString(), any(LocalDateTime.class));
 
-        final ParkedDTO result = parkingValetController.enterParking(VehicleType.CAR, licensePlate, timeIn);
+        final ParkedDTO result = parkingValetController.enterParking(VehicleType.CAR, vehicleNumber, timeIn);
 
-        verify(parkingValetService, times(1)).parkVehicle(VehicleType.CAR, licensePlate, timeIn);
+        verify(parkingValetService, times(1)).parkVehicle(VehicleType.CAR, vehicleNumber, timeIn);
 
         assertNotNull(result);
         assertTrue(result.isAccepted());
@@ -82,13 +82,13 @@ class ParkingValetControllerTest {
      */
     @Test
     void enterParking_parkingNotAvailable_returnFailed() {
-        final String licensePlate = "ABC1234Z";
+        final String vehicleNumber = "ABC1234Z";
         final LocalDateTime timeIn = LocalDateTime.of(2021, 10, 8, 13, 10, 11);
         when(parkingValetService.parkVehicle(any(VehicleType.class), anyString(), any(LocalDateTime.class))).thenReturn(null);
 
-        final ParkedDTO result = parkingValetController.enterParking(VehicleType.CAR, licensePlate, timeIn);
+        final ParkedDTO result = parkingValetController.enterParking(VehicleType.CAR, vehicleNumber, timeIn);
 
-        verify(parkingValetService, times(1)).parkVehicle(VehicleType.CAR, licensePlate, timeIn);
+        verify(parkingValetService, times(1)).parkVehicle(VehicleType.CAR, vehicleNumber, timeIn);
 
         assertNotNull(result);
         assertFalse(result.isAccepted());

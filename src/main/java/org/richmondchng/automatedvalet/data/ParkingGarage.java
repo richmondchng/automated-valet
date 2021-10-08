@@ -26,6 +26,7 @@ public class ParkingGarage {
      */
     public ParkingGarage(final Map<VehicleType, Integer> configurations) {
         super();
+
         if(configurations == null) {
             throw new InvalidParameterException("Configurations is null");
         }
