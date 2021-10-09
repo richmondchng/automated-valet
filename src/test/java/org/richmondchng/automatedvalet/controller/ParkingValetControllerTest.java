@@ -115,7 +115,7 @@ class ParkingValetControllerTest {
                         .label("CarLot2")
                         .timeIn(LocalDateTime.of(2021, 10, 8, 11, 10, 11))
                         .timeOut(timeOut).build());
-        when(parkingFeeService.calculateParkingFee(any(ParkingDetails.class))).thenReturn(4);
+        when(parkingFeeService.calculateParkingFee(any(ParkingDetails.class))).thenReturn(4L);
 
         final ParkingFeeDTO result = parkingValetController.exitParking(vehicleNumber, timeOut);
 

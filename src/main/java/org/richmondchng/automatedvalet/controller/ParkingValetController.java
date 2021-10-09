@@ -49,7 +49,7 @@ public class ParkingValetController {
         // this returns none-null object
         // exception will be thrown if parking details is incorrect
         final ParkingDetails parkingDetails = parkingValetService.removeVehicle(vehicleNumber, timestamp);
-        final int parkingFees = parkingFeeService.calculateParkingFee(parkingDetails);
+        final long parkingFees = parkingFeeService.calculateParkingFee(parkingDetails);
         // return details
         return new ParkingFeeDTO(parkingDetails.getLabel(), parkingFees);
     }

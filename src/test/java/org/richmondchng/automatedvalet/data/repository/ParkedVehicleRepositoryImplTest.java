@@ -174,6 +174,7 @@ class ParkedVehicleRepositoryImplTest {
         when(parkedVehicleDataStorage.getParkedVehicleByVehicleNumber(anyString())).thenReturn(null);
 
         final ParkedVehicleEntity result = parkedVehicleRepository.findParkedVehicleByVehicleNumber("ABC1234T");
+        verify(parkedVehicleDataStorage, times(1)).getParkedVehicleByVehicleNumber("ABC1234T");
         assertNull(result);
     }
 
@@ -194,6 +195,51 @@ class ParkedVehicleRepositoryImplTest {
                 .build());
 
         final ParkedVehicleEntity result = parkedVehicleRepository.findParkedVehicleByVehicleNumber("ABC3456U");
+        verify(parkedVehicleDataStorage, times(1)).getParkedVehicleByVehicleNumber("ABC3456U");
+        assertNotNull(result);
+        assertNotNull(result.getId());
+        assertEquals(VehicleType.CAR, result.getVehicleType());
+        assertEquals("ABC3456U", result.getVehicleNumber());
+        assertEquals(2, result.getLotNumber());
+        assertNotNull(result.getTimeIn());
+        assertNotNull(result.getTimeOut());
+    }
+
+    /**
+     * Test findById.
+     *
+     * Has no matching ID, return null.
+     */
+    @Test
+    void findById_noMatch_returnNull() {
+        when(parkedVehicleDataStorage.getRecordById(any(UUID.class))).thenReturn(null);
+
+        final UUID id = UUID.randomUUID();
+        final ParkedVehicleEntity result = parkedVehicleRepository.findById(id);
+
+        verify(parkedVehicleDataStorage, times(1)).getRecordById(id);
+        assertNull(result);
+    }
+
+    /**
+     * Test findById.
+     *
+     * Has matching ID, return entity bean.
+     */
+    @Test
+    void findById_matchedID_returnEntity() {
+        final UUID id = UUID.randomUUID();
+        when(parkedVehicleDataStorage.getRecordById(any(UUID.class))).thenReturn(ParkedVehicleEntity.builder()
+                .id(id)
+                .vehicleType(VehicleType.CAR)
+                .vehicleNumber("ABC3456U")
+                .lotNumber(2)
+                .timeIn(LocalDateTime.of(2021, 5, 4, 10, 20, 1))
+                .timeOut(LocalDateTime.of(2021, 5, 4, 11, 20, 1))
+                .build());
+
+        final ParkedVehicleEntity result = parkedVehicleRepository.findById(id);
+        verify(parkedVehicleDataStorage, times(1)).getRecordById(id);
         assertNotNull(result);
         assertNotNull(result.getId());
         assertEquals(VehicleType.CAR, result.getVehicleType());

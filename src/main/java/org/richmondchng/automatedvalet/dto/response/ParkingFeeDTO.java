@@ -14,5 +14,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ParkingFeeDTO {
     private String label;
-    private int parkingFee;
+    private long parkingFee;
 }

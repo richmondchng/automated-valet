@@ -6,6 +6,7 @@ import org.richmondchng.automatedvalet.data.storage.ParkedVehicleDataStorage;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -35,6 +36,15 @@ public class ParkedVehicleRepositoryImpl implements ParkedVehicleRepository {
     @Override
     public ParkedVehicleEntity findParkedVehicleByVehicleNumber(final String vehicleNumber) {
         final ParkedVehicleEntity entity = parkedVehicleDataStorage.getParkedVehicleByVehicleNumber(vehicleNumber);
+        if(entity != null) {
+            return copy(entity);
+        }
+        return null;
+    }
+
+    @Override
+    public ParkedVehicleEntity findById(final UUID id) {
+        final ParkedVehicleEntity entity = parkedVehicleDataStorage.getRecordById(id);
         if(entity != null) {
             return copy(entity);
         }

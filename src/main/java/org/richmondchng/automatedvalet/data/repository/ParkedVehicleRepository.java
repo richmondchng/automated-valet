@@ -4,6 +4,7 @@ import org.richmondchng.automatedvalet.data.entity.ParkedVehicleEntity;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Data repository representing parked vehicles.
@@ -32,4 +33,11 @@ public interface ParkedVehicleRepository {
      * @return ParkedVehicleEntity or null if not found
      */
     ParkedVehicleEntity findParkedVehicleByVehicleNumber(final String vehicleNumber);
+
+    /**
+     * Find record by ID.
+     * @param id record ID
+     * @return ParkedVehicleEntity or null
+     */
+    ParkedVehicleEntity findById(final UUID id);
 }

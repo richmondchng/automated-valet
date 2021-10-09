@@ -24,5 +24,5 @@ public class ParkedVehicleEntity {
     private int lotNumber;
     private LocalDateTime timeIn;
     private LocalDateTime timeOut;
-    private Integer parkingFee;
+    private long parkingFee;
 }
