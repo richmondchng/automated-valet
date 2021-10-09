@@ -58,9 +58,7 @@ public class ParkedVehicleDataStorage {
         data.setTimeIn(parkedVehicleEntity.getTimeIn());
         data.setTimeOut(parkedVehicleEntity.getTimeOut());
         data.setParkingFee(parkedVehicleEntity.getParkingFee());
-
-        // return a copy of data
-        return copy(data);
+        return data;
     }
 
     /**
@@ -87,13 +85,9 @@ public class ParkedVehicleDataStorage {
         if(vehicleNumber == null) {
             throw new InvalidParameterException("Vehicle number cannot be null");
         }
-        final ParkedVehicleEntity entity = parkedVehiclesEntities.stream()
+        return parkedVehiclesEntities.stream()
                 .filter(b -> vehicleNumber.equals(b.getVehicleNumber()) && b.getTimeOut() == null)
                 .findAny().orElse(null);
-        if(entity != null) {
-            return copy(entity);
-        }
-        return null;
     }
 
     /**
@@ -105,29 +99,10 @@ public class ParkedVehicleDataStorage {
         if(id == null) {
             throw new InvalidParameterException("Id cannot be null");
         }
-        final ParkedVehicleEntity entity = parkedVehiclesEntities.stream()
+        return parkedVehiclesEntities.stream()
                 .filter(b -> id.equals(b.getId()))
                 .findAny().orElse(null);
-        if(entity != null) {
-            return copy(entity);
-        }
-        return null;
     }
 
-    /**
-     * Make a copy
-     * @param src ParkedVehicleEntity
-     * @return ParkedVehicleEntity
-     */
-    private ParkedVehicleEntity copy(final ParkedVehicleEntity src) {
-        return ParkedVehicleEntity.builder()
-                .id(src.getId())
-                .vehicleType(src.getVehicleType())
-                .vehicleNumber(src.getVehicleNumber())
-                .lotNumber(src.getLotNumber())
-                .timeIn(src.getTimeIn())
-                .timeOut(src.getTimeOut())
-                .parkingFee(src.getParkingFee())
-                .build();
-    }
+
 }
