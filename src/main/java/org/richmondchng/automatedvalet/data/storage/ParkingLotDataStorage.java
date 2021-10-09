@@ -13,6 +13,8 @@ import java.util.Map;
 /**
  * Data storage representing data storage for ParkingLotEntity.
  *
+ * This can then be replaced with actual database, or other data storage.
+ *
  * @author richmondchng
  */
 public class ParkingLotDataStorage {
