@@ -3,7 +3,7 @@ package org.richmondchng.automatedvalet.controller;
 import lombok.RequiredArgsConstructor;
 import org.richmondchng.automatedvalet.dto.response.ParkedDTO;
 import org.richmondchng.automatedvalet.dto.response.ParkingFeeDTO;
-import org.richmondchng.automatedvalet.model.parking.ParkingLot;
+import org.richmondchng.automatedvalet.model.parking.ParkingDetails;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 import org.richmondchng.automatedvalet.service.ParkingFeeService;
 import org.richmondchng.automatedvalet.service.ParkingValetService;
@@ -30,7 +30,7 @@ public class ParkingValetController {
      */
     public ParkedDTO enterParking(final VehicleType vehicle, final String vehicleNumber, final LocalDateTime timestamp) {
 
-        final ParkingLot parkingDetails = parkingValetService.parkVehicle(vehicle, vehicleNumber, timestamp);
+        final ParkingDetails parkingDetails = parkingValetService.parkVehicle(vehicle, vehicleNumber, timestamp);
         if(parkingDetails != null) {
             // a parking lot is allocated
             return new ParkedDTO(true, parkingDetails.getLabel());
@@ -48,7 +48,7 @@ public class ParkingValetController {
     public ParkingFeeDTO exitParking(final String vehicleNumber, final LocalDateTime timestamp) {
         // this returns none-null object
         // exception will be thrown if parking details is incorrect
-        final ParkingLot parkingDetails = parkingValetService.removeVehicle(vehicleNumber, timestamp);
+        final ParkingDetails parkingDetails = parkingValetService.removeVehicle(vehicleNumber, timestamp);
         final int parkingFees = parkingFeeService.calculateParkingFee(parkingDetails);
         // return details
         return new ParkingFeeDTO(parkingDetails.getLabel(), parkingFees);

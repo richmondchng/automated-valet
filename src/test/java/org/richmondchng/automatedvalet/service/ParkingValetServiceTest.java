@@ -12,7 +12,7 @@ import org.richmondchng.automatedvalet.data.entity.ParkingLotEntity;
 import org.richmondchng.automatedvalet.data.repository.ParkedVehicleRepository;
 import org.richmondchng.automatedvalet.data.repository.ParkingLotRepository;
 import org.richmondchng.automatedvalet.exception.VehicleAlreadyParkedException;
-import org.richmondchng.automatedvalet.model.parking.ParkingLot;
+import org.richmondchng.automatedvalet.model.parking.ParkingDetails;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 
 import java.security.InvalidParameterException;
@@ -130,7 +130,7 @@ class ParkingValetServiceTest {
         ));
 
         final LocalDateTime timeIn = LocalDateTime.of(2021, 10, 7, 10, 40, 23);
-        final ParkingLot result = parkingValetService.parkVehicle(VehicleType.CAR, "YEE4562U", timeIn);
+        final ParkingDetails result = parkingValetService.parkVehicle(VehicleType.CAR, "YEE4562U", timeIn);
 
         verify(parkingLotRepository, times(1)).getParkingLotByVehicleTypeOrderByLotNumber(
                 VehicleType.CAR);
@@ -192,7 +192,7 @@ class ParkingValetServiceTest {
         }).when(parkedVehicleRepository).save(any(ParkedVehicleEntity.class));
 
         final LocalDateTime timeIn = LocalDateTime.of(2021, 10, 7, 10, 40, 23);
-        final ParkingLot result = parkingValetService.parkVehicle(VehicleType.CAR, "YEE4562U", timeIn);
+        final ParkingDetails result = parkingValetService.parkVehicle(VehicleType.CAR, "YEE4562U", timeIn);
 
         verify(parkingLotRepository, times(1)).getParkingLotByVehicleTypeOrderByLotNumber(
                 VehicleType.CAR);

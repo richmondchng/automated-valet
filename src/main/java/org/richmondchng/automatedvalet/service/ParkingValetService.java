@@ -6,7 +6,7 @@ import org.richmondchng.automatedvalet.data.entity.ParkingLotEntity;
 import org.richmondchng.automatedvalet.data.repository.ParkedVehicleRepository;
 import org.richmondchng.automatedvalet.data.repository.ParkingLotRepository;
 import org.richmondchng.automatedvalet.exception.VehicleAlreadyParkedException;
-import org.richmondchng.automatedvalet.model.parking.ParkingLot;
+import org.richmondchng.automatedvalet.model.parking.ParkingDetails;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 
 import java.security.InvalidParameterException;
@@ -37,7 +37,7 @@ public class ParkingValetService {
      * @param timestampIn timestamp entering parking
      * @return ParkingLot describing parking lot details, null if not parked
      */
-    public ParkingLot parkVehicle(final VehicleType vehicleType, final String vehicleNumber, final LocalDateTime timestampIn) {
+    public ParkingDetails parkVehicle(final VehicleType vehicleType, final String vehicleNumber, final LocalDateTime timestampIn) {
         if(vehicleType == null) {
             throw new InvalidParameterException("Vehicle type is required");
         }
@@ -87,7 +87,7 @@ public class ParkingValetService {
                 .build());
 
         // create service bean to return details
-        return ParkingLot.builder()
+        return ParkingDetails.builder()
                 .vehicleType(parkedVehicleEntity.getVehicleType())
                 .vehicleNumber(parkedVehicleEntity.getVehicleNumber())
                 .label(MessageFormat.format(PARKING_LOT_LABEL, parkedVehicleEntity.getVehicleType().getLabel(),
@@ -102,7 +102,7 @@ public class ParkingValetService {
      * @param timestampOut timestamp exiting parking
      * @return ParkingLot describing parking lot details
      */
-    public ParkingLot removeVehicle(final String vehicleNumber, final LocalDateTime timestampOut) {
+    public ParkingDetails removeVehicle(final String vehicleNumber, final LocalDateTime timestampOut) {
         return null;
     }
 }

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class ParkingLot {
+public class ParkingDetails {
     private VehicleType vehicleType;
     private String label;
     private String vehicleNumber;

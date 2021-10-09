@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.richmondchng.automatedvalet.dto.response.ParkedDTO;
 import org.richmondchng.automatedvalet.dto.response.ParkingFeeDTO;
-import org.richmondchng.automatedvalet.model.parking.ParkingLot;
+import org.richmondchng.automatedvalet.model.parking.ParkingDetails;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 import org.richmondchng.automatedvalet.service.ParkingFeeService;
 import org.richmondchng.automatedvalet.service.ParkingValetService;
@@ -62,7 +62,7 @@ class ParkingValetControllerTest {
     void enterParking_parkingAvailable_returnSuccess() {
         final String vehicleNumber = "ABC1234Z";
         final LocalDateTime timeIn = LocalDateTime.of(2021, 10, 8, 13, 10, 11);
-        final ParkingLot parked = ParkingLot.builder()
+        final ParkingDetails parked = ParkingDetails.builder()
                 .vehicleType(VehicleType.CAR)
                 .vehicleNumber(vehicleNumber)
                 .timeIn(timeIn)
@@ -109,18 +109,18 @@ class ParkingValetControllerTest {
     void exitParking_vehicleFound_returnSuccess() {
         final String vehicleNumber = "ABC1234Z";
         final LocalDateTime timeOut = LocalDateTime.of(2021, 10, 8, 13, 10, 11);
-        when(parkingValetService.removeVehicle(anyString(), any(LocalDateTime.class))).thenReturn(ParkingLot.builder()
+        when(parkingValetService.removeVehicle(anyString(), any(LocalDateTime.class))).thenReturn(ParkingDetails.builder()
                         .vehicleType(VehicleType.CAR)
                         .vehicleNumber(vehicleNumber)
                         .label("CarLot2")
                         .timeIn(LocalDateTime.of(2021, 10, 8, 11, 10, 11))
                         .timeOut(timeOut).build());
-        when(parkingFeeService.calculateParkingFee(any(ParkingLot.class))).thenReturn(4);
+        when(parkingFeeService.calculateParkingFee(any(ParkingDetails.class))).thenReturn(4);
 
         final ParkingFeeDTO result = parkingValetController.exitParking(vehicleNumber, timeOut);
 
         verify(parkingValetService, times(1)).removeVehicle(vehicleNumber, timeOut);
-        verify(parkingFeeService, times(1)).calculateParkingFee(any(ParkingLot.class));
+        verify(parkingFeeService, times(1)).calculateParkingFee(any(ParkingDetails.class));
 
         assertNotNull(result);
         assertEquals("CarLot2", result.getLabel());
