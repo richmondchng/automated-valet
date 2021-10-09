@@ -25,4 +25,11 @@ public interface ParkedVehicleRepository {
      * @return list of parked vehicles
      */
     List<ParkedVehicleEntity> getParkedVehicleByVehicleType(final VehicleType vehicleType);
+
+    /**
+     * Find vehicle by vehicle number, and time out is null.
+     * @param vehicleNumber vehicle number
+     * @return ParkedVehicleEntity or null if not found
+     */
+    ParkedVehicleEntity findParkedVehicleByVehicleNumber(final String vehicleNumber);
 }

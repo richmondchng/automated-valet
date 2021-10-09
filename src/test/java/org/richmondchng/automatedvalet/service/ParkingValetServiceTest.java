@@ -11,7 +11,10 @@ import org.richmondchng.automatedvalet.data.entity.ParkedVehicleEntity;
 import org.richmondchng.automatedvalet.data.entity.ParkingLotEntity;
 import org.richmondchng.automatedvalet.data.repository.ParkedVehicleRepository;
 import org.richmondchng.automatedvalet.data.repository.ParkingLotRepository;
+import org.richmondchng.automatedvalet.exception.TimeOutBeforeTimeInException;
 import org.richmondchng.automatedvalet.exception.VehicleAlreadyParkedException;
+import org.richmondchng.automatedvalet.exception.VehicleNotParkedException;
+import org.richmondchng.automatedvalet.exception.VehicleParkingException;
 import org.richmondchng.automatedvalet.model.parking.ParkingDetails;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 
@@ -25,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -213,4 +217,82 @@ class ParkingValetServiceTest {
         assertEquals(timeIn, result.getTimeIn());
     }
 
+    /**
+     * Test removeVehicle.
+     *
+     * Invalid vehicle number parameter, throw exception
+     */
+    @Test
+    void removeVehicle_invalidVehicleNumber_throwException() {
+        try {
+            parkingValetService.removeVehicle(null, LocalDateTime.now());
+            fail("Expect exception to be thrown");
+        } catch(RuntimeException e) {
+            assertTrue(e instanceof InvalidParameterException);
+            assertEquals("Vehicle number is required", e.getMessage());
+            verifyNoInteractions(parkedVehicleRepository);
+        }
+    }
+
+    /**
+     * Test removeVehicle.
+     *
+     * Null time out parameter, throw exception
+     */
+    @Test
+    void removeVehicle_nullTimeOut_throwException() {
+        try {
+            parkingValetService.removeVehicle("ABC1234Y", null);
+            fail("Expect exception to be thrown");
+        } catch(RuntimeException e) {
+            assertTrue(e instanceof InvalidParameterException);
+            assertEquals("Time out is required", e.getMessage());
+            verifyNoInteractions(parkedVehicleRepository);
+        }
+    }
+
+    /**
+     * Test removeVehicle.
+     *
+     * Vehicle not found in data, throw exception
+     */
+    @Test
+    void removeVehicle_vehicleNotFound_throwException() {
+        when(parkedVehicleRepository.findParkedVehicleByVehicleNumber(anyString())).thenReturn(null);
+
+        try {
+            parkingValetService.removeVehicle("ABC1234Y", LocalDateTime.now());
+            fail("Expect exception to be thrown");
+        } catch(VehicleParkingException e) {
+            assertTrue(e instanceof VehicleNotParkedException);
+            assertEquals("ABC1234Y is not found in parking", e.getMessage());
+            verify(parkedVehicleRepository, times(1)).findParkedVehicleByVehicleNumber("ABC1234Y");
+        }
+    }
+
+    /**
+     * Test removeVehicle.
+     *
+     * Time out is before time in, throw exception
+     */
+    @Test
+    void removeVehicle_timeOutIsBeforeTimeIn_throwException() {
+        when(parkedVehicleRepository.findParkedVehicleByVehicleNumber(anyString())).thenReturn(
+                ParkedVehicleEntity.builder()
+                        .vehicleType(VehicleType.CAR)
+                        .lotNumber(2)
+                        .vehicleNumber("ABC1234Y")
+                        .timeIn(LocalDateTime.of(2021, 10, 4, 10, 11, 30))
+                        .build());
+
+        try {
+            parkingValetService.removeVehicle("ABC1234Y",
+                    LocalDateTime.of(2021, 10, 4, 10, 10, 30));
+            fail("Expect exception to be thrown");
+        } catch(VehicleParkingException e) {
+            assertTrue(e instanceof TimeOutBeforeTimeInException);
+            assertEquals("Time out is before time in", e.getMessage());
+            verify(parkedVehicleRepository, times(1)).findParkedVehicleByVehicleNumber("ABC1234Y");
+        }
+    }
 }

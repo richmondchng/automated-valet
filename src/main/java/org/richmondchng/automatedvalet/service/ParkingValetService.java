@@ -5,7 +5,9 @@ import org.richmondchng.automatedvalet.data.entity.ParkedVehicleEntity;
 import org.richmondchng.automatedvalet.data.entity.ParkingLotEntity;
 import org.richmondchng.automatedvalet.data.repository.ParkedVehicleRepository;
 import org.richmondchng.automatedvalet.data.repository.ParkingLotRepository;
+import org.richmondchng.automatedvalet.exception.TimeOutBeforeTimeInException;
 import org.richmondchng.automatedvalet.exception.VehicleAlreadyParkedException;
+import org.richmondchng.automatedvalet.exception.VehicleNotParkedException;
 import org.richmondchng.automatedvalet.model.parking.ParkingDetails;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 
@@ -103,6 +105,33 @@ public class ParkingValetService {
      * @return ParkingLot describing parking lot details
      */
     public ParkingDetails removeVehicle(final String vehicleNumber, final LocalDateTime timestampOut) {
-        return null;
+        if(vehicleNumber == null) {
+            throw new InvalidParameterException("Vehicle number is required");
+        }
+        if(timestampOut == null) {
+            throw new InvalidParameterException("Time out is required");
+        }
+        final ParkedVehicleEntity parkedVehicleEntity = parkedVehicleRepository.findParkedVehicleByVehicleNumber(vehicleNumber);
+        if(parkedVehicleEntity == null) {
+            // not found = not parked
+            throw new VehicleNotParkedException(vehicleNumber);
+        }
+        if(parkedVehicleEntity.getTimeIn().compareTo(timestampOut) > 0) {
+            // time out is before time in
+            throw new TimeOutBeforeTimeInException();
+        }
+//        // update time out
+//        parkedVehicleEntity.setTimeOut(timestampOut);
+//        parkedVehicleRepository.save(parkedVehicleEntity);
+
+        // create service bean to return details
+        return ParkingDetails.builder()
+                .vehicleType(parkedVehicleEntity.getVehicleType())
+                .vehicleNumber(parkedVehicleEntity.getVehicleNumber())
+                .label(MessageFormat.format(PARKING_LOT_LABEL, parkedVehicleEntity.getVehicleType().getLabel(),
+                        parkedVehicleEntity.getLotNumber()))
+                .timeIn(parkedVehicleEntity.getTimeIn())
+                .timeOut(parkedVehicleEntity.getTimeOut())
+                .build();
     }
 }
