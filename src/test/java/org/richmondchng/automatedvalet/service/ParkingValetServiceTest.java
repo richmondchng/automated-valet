@@ -21,6 +21,7 @@ import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -267,6 +268,8 @@ class ParkingValetServiceTest {
             assertTrue(e instanceof VehicleNotParkedException);
             assertEquals("ABC1234Y is not found in parking", e.getMessage());
             verify(parkedVehicleRepository, times(1)).findParkedVehicleByVehicleNumber("ABC1234Y");
+            // not saved
+            verify(parkedVehicleRepository, times(0)).save(any());
         }
     }
 
@@ -293,6 +296,39 @@ class ParkingValetServiceTest {
             assertTrue(e instanceof TimeOutBeforeTimeInException);
             assertEquals("Time out is before time in", e.getMessage());
             verify(parkedVehicleRepository, times(1)).findParkedVehicleByVehicleNumber("ABC1234Y");
+            // not saved
+            verify(parkedVehicleRepository, times(0)).save(any());
         }
+    }
+
+    /**
+     * Test removeVehicle.
+     *
+     * Has valid vehicle, update and remove vehicle.
+     */
+    @Test
+    void removeVehicle_validVehicle_removeAndUpdate() {
+        final UUID id = UUID.randomUUID();
+        when(parkedVehicleRepository.findParkedVehicleByVehicleNumber(anyString())).thenReturn(
+                ParkedVehicleEntity.builder()
+                        .id(id)
+                        .vehicleType(VehicleType.CAR)
+                        .lotNumber(2)
+                        .vehicleNumber("ABC1234Y")
+                        .timeIn(LocalDateTime.of(2021, 10, 4, 10, 11, 30))
+                        .build());
+
+        final ParkingDetails result = parkingValetService.removeVehicle("ABC1234Y",
+                LocalDateTime.of(2021, 10, 4, 12, 10, 30));
+
+        verify(parkedVehicleRepository, times(1)).findParkedVehicleByVehicleNumber("ABC1234Y");
+        verify(parkedVehicleRepository, times(1)).save(any());
+
+        assertEquals(id, result.getId());
+        assertEquals(VehicleType.CAR, result.getVehicleType());
+        assertEquals("ABC1234Y", result.getVehicleNumber());
+        assertEquals("CarLot2", result.getLabel());
+        assertEquals(LocalDateTime.of(2021, 10, 4, 10, 11, 30), result.getTimeIn());
+        assertEquals(LocalDateTime.of(2021, 10, 4, 12, 10, 30), result.getTimeOut());
     }
 }

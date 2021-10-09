@@ -90,6 +90,7 @@ public class ParkingValetService {
 
         // create service bean to return details
         return ParkingDetails.builder()
+                .id(parkedVehicleEntity.getId())
                 .vehicleType(parkedVehicleEntity.getVehicleType())
                 .vehicleNumber(parkedVehicleEntity.getVehicleNumber())
                 .label(MessageFormat.format(PARKING_LOT_LABEL, parkedVehicleEntity.getVehicleType().getLabel(),
@@ -120,12 +121,13 @@ public class ParkingValetService {
             // time out is before time in
             throw new TimeOutBeforeTimeInException();
         }
-//        // update time out
-//        parkedVehicleEntity.setTimeOut(timestampOut);
-//        parkedVehicleRepository.save(parkedVehicleEntity);
+        // update time out
+        parkedVehicleEntity.setTimeOut(timestampOut);
+        parkedVehicleRepository.save(parkedVehicleEntity);
 
         // create service bean to return details
         return ParkingDetails.builder()
+                .id(parkedVehicleEntity.getId())
                 .vehicleType(parkedVehicleEntity.getVehicleType())
                 .vehicleNumber(parkedVehicleEntity.getVehicleNumber())
                 .label(MessageFormat.format(PARKING_LOT_LABEL, parkedVehicleEntity.getVehicleType().getLabel(),
