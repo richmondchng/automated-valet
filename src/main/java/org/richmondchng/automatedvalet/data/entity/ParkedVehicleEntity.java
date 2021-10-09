@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Entity representing a parked vehicle.
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class ParkedVehicleEntity {
+    private UUID id;
     private VehicleType vehicleType;
     private String vehicleNumber;
     private int lotNumber;
