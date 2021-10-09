@@ -24,7 +24,7 @@ public class ParkingLotRepositoryImpl implements ParkingLotRepository {
     private final ParkingLotDataStorage parkingLotDataStorage;
 
     @Override
-    public List<ParkingLotEntity> getParkingLotByVehicleTypeOrderByLotNumber(final VehicleType vehicleType) {
+    public List<ParkingLotEntity> finalAllParkingLotsByVehicleTypeOrderByLotNumber(final VehicleType vehicleType) {
         final List<ParkingLotEntity> parkingLotEntityList = parkingLotDataStorage.getByVehicleType(vehicleType);
         if(CollectionUtils.isEmpty(parkingLotEntityList)) {
             return Collections.emptyList();

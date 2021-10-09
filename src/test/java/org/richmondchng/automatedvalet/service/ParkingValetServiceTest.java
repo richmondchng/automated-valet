@@ -115,14 +115,14 @@ class ParkingValetServiceTest {
      */
     @Test
     void parkVehicle_noAvailableParking_returnNull() {
-        when(parkingLotRepository.getParkingLotByVehicleTypeOrderByLotNumber(any(VehicleType.class))).thenReturn(
+        when(parkingLotRepository.finalAllParkingLotsByVehicleTypeOrderByLotNumber(any(VehicleType.class))).thenReturn(
                 Arrays.asList(
                         ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(1).build(),
                         ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(2).build(),
                         ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(3).build(),
                         ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(4).build()
                 ));
-        when(parkedVehicleRepository.getParkedVehicleByVehicleType(any(VehicleType.class))).thenReturn(Arrays.asList(
+        when(parkedVehicleRepository.findAllParkedVehiclesByVehicleType(any(VehicleType.class))).thenReturn(Arrays.asList(
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("ABC1234X").lotNumber(1)
                         .timeIn(LocalDateTime.now()).build(),
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("DBC2234X").lotNumber(2)
@@ -136,9 +136,9 @@ class ParkingValetServiceTest {
         final LocalDateTime timeIn = LocalDateTime.of(2021, 10, 7, 10, 40, 23);
         final ParkingDetails result = parkingValetService.parkVehicle(VehicleType.CAR, "YEE4562U", timeIn);
 
-        verify(parkingLotRepository, times(1)).getParkingLotByVehicleTypeOrderByLotNumber(
+        verify(parkingLotRepository, times(1)).finalAllParkingLotsByVehicleTypeOrderByLotNumber(
                 VehicleType.CAR);
-        verify(parkedVehicleRepository, times(1)).getParkedVehicleByVehicleType(VehicleType.CAR);
+        verify(parkedVehicleRepository, times(1)).findAllParkedVehiclesByVehicleType(VehicleType.CAR);
         // no save action
         verify(parkedVehicleRepository, never()).save(any(ParkedVehicleEntity.class));
 
@@ -151,7 +151,7 @@ class ParkingValetServiceTest {
     @Test
     void parkVehicle_hasAvailableParking_VehicleAlreadyParked_throwException() {
         // vehicle is already parked in lot 2
-        when(parkedVehicleRepository.getParkedVehicleByVehicleType(any(VehicleType.class))).thenReturn(Arrays.asList(
+        when(parkedVehicleRepository.findAllParkedVehiclesByVehicleType(any(VehicleType.class))).thenReturn(Arrays.asList(
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("ABC1234X").lotNumber(1)
                         .timeIn(LocalDateTime.now()).build(),
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("DBC1234X").lotNumber(3)
@@ -166,7 +166,7 @@ class ParkingValetServiceTest {
             assertTrue(e instanceof VehicleAlreadyParkedException, e.getClass().getSimpleName() + " is thrown");
             assertEquals("Car DBC1234X is already parked", e.getMessage());
             verifyNoInteractions(parkingLotRepository);
-            verify(parkedVehicleRepository, times(1)).getParkedVehicleByVehicleType(VehicleType.CAR);
+            verify(parkedVehicleRepository, times(1)).findAllParkedVehiclesByVehicleType(VehicleType.CAR);
             verify(parkedVehicleRepository, never()).save(any(ParkedVehicleEntity.class));
         }
     }
@@ -176,7 +176,7 @@ class ParkingValetServiceTest {
      */
     @Test
     void parkVehicle_hasAvailableParking_returnParkingLot() {
-        when(parkingLotRepository.getParkingLotByVehicleTypeOrderByLotNumber(any(VehicleType.class))).thenReturn(
+        when(parkingLotRepository.finalAllParkingLotsByVehicleTypeOrderByLotNumber(any(VehicleType.class))).thenReturn(
                 Arrays.asList(
                         ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(1).build(),
                         ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(2).build(),
@@ -184,7 +184,7 @@ class ParkingValetServiceTest {
                         ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(4).build()
                 ));
         // lot 2 and 4 are empty
-        when(parkedVehicleRepository.getParkedVehicleByVehicleType(any(VehicleType.class))).thenReturn(Arrays.asList(
+        when(parkedVehicleRepository.findAllParkedVehiclesByVehicleType(any(VehicleType.class))).thenReturn(Arrays.asList(
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("ABC1234X").lotNumber(1)
                         .timeIn(LocalDateTime.now()).build(),
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("DBC1234X").lotNumber(3)
@@ -198,9 +198,9 @@ class ParkingValetServiceTest {
         final LocalDateTime timeIn = LocalDateTime.of(2021, 10, 7, 10, 40, 23);
         final ParkingDetails result = parkingValetService.parkVehicle(VehicleType.CAR, "YEE4562U", timeIn);
 
-        verify(parkingLotRepository, times(1)).getParkingLotByVehicleTypeOrderByLotNumber(
+        verify(parkingLotRepository, times(1)).finalAllParkingLotsByVehicleTypeOrderByLotNumber(
                 VehicleType.CAR);
-        verify(parkedVehicleRepository, times(1)).getParkedVehicleByVehicleType(VehicleType.CAR);
+        verify(parkedVehicleRepository, times(1)).findAllParkedVehiclesByVehicleType(VehicleType.CAR);
         // save entity bean
         final ArgumentCaptor<ParkedVehicleEntity> captor = ArgumentCaptor.forClass(ParkedVehicleEntity.class);
         verify(parkedVehicleRepository, times(1)).save(captor.capture());

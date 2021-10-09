@@ -26,7 +26,7 @@ public class ParkedVehicleRepositoryImpl implements ParkedVehicleRepository {
     }
 
     @Override
-    public List<ParkedVehicleEntity> getParkedVehicleByVehicleType(final VehicleType vehicleType) {
+    public List<ParkedVehicleEntity> findAllParkedVehiclesByVehicleType(final VehicleType vehicleType) {
         return Collections.unmodifiableList(parkedVehicleDataStorage.getParkedVehiclesByVehicleType(vehicleType));
     }
 

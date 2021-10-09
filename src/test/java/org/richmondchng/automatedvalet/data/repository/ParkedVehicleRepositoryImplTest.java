@@ -101,7 +101,7 @@ class ParkedVehicleRepositoryImplTest {
     void getParkedVehicleByVehicleType_noParkedVehicle_returnEmptyList() {
         when(parkedVehicleDataStorage.getParkedVehiclesByVehicleType(any(VehicleType.class))).thenReturn(Collections.emptyList());
 
-        final List<ParkedVehicleEntity> results = parkedVehicleRepository.getParkedVehicleByVehicleType(VehicleType.CAR);
+        final List<ParkedVehicleEntity> results = parkedVehicleRepository.findAllParkedVehiclesByVehicleType(VehicleType.CAR);
 
         verify(parkedVehicleDataStorage, times(1)).getParkedVehiclesByVehicleType(VehicleType.CAR);
 
@@ -121,7 +121,7 @@ class ParkedVehicleRepositoryImplTest {
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("DEF2234U").build()
         ));
 
-        final List<ParkedVehicleEntity> results = parkedVehicleRepository.getParkedVehicleByVehicleType(VehicleType.CAR);
+        final List<ParkedVehicleEntity> results = parkedVehicleRepository.findAllParkedVehiclesByVehicleType(VehicleType.CAR);
 
         verify(parkedVehicleDataStorage, times(1)).getParkedVehiclesByVehicleType(VehicleType.CAR);
 
@@ -143,7 +143,7 @@ class ParkedVehicleRepositoryImplTest {
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("DEF2234U").build()
         ));
 
-        final List<ParkedVehicleEntity> results = parkedVehicleRepository.getParkedVehicleByVehicleType(VehicleType.CAR);
+        final List<ParkedVehicleEntity> results = parkedVehicleRepository.findAllParkedVehiclesByVehicleType(VehicleType.CAR);
 
         try {
             results.add(ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("ABC1299T").build());

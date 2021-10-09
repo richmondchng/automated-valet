@@ -13,9 +13,9 @@ import java.util.List;
 public interface ParkingLotRepository {
 
     /**
-     * Get parkling lots by vehicle type, order by lot number ascending.
+     * Get parking lots by vehicle type, order by lot number ascending.
      * @param vehicleType
      * @return
      */
-    List<ParkingLotEntity> getParkingLotByVehicleTypeOrderByLotNumber(final VehicleType vehicleType);
+    List<ParkingLotEntity> finalAllParkingLotsByVehicleTypeOrderByLotNumber(final VehicleType vehicleType);
 }

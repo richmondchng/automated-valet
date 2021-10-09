@@ -58,7 +58,7 @@ class ParkingLotRepositoryImplTest {
         // return empty list
         when(parkingLotDataStorage.getByVehicleType(any(VehicleType.class))).thenReturn(Collections.emptyList());
 
-        final List<ParkingLotEntity> results = parkingLotRepository.getParkingLotByVehicleTypeOrderByLotNumber(VehicleType.CAR);
+        final List<ParkingLotEntity> results = parkingLotRepository.finalAllParkingLotsByVehicleTypeOrderByLotNumber(VehicleType.CAR);
         assertNotNull(results);
         assertEquals(0, results.size());
 
@@ -80,7 +80,7 @@ class ParkingLotRepositoryImplTest {
                 ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(3).build()
         ));
 
-        final List<ParkingLotEntity> results = parkingLotRepository.getParkingLotByVehicleTypeOrderByLotNumber(VehicleType.CAR);
+        final List<ParkingLotEntity> results = parkingLotRepository.finalAllParkingLotsByVehicleTypeOrderByLotNumber(VehicleType.CAR);
         assertNotNull(results);
         assertEquals(4, results.size());
 
@@ -119,7 +119,7 @@ class ParkingLotRepositoryImplTest {
                 ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(3).build()
         ));
 
-        final List<ParkingLotEntity> results = parkingLotRepository.getParkingLotByVehicleTypeOrderByLotNumber(VehicleType.CAR);
+        final List<ParkingLotEntity> results = parkingLotRepository.finalAllParkingLotsByVehicleTypeOrderByLotNumber(VehicleType.CAR);
 
         try {
             results.add(ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(5).build());
