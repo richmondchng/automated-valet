@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 /**
  * Service bean describing a parked vehicle.
- * 
+ *
  * @author richmondchng
  */
 @Getter
