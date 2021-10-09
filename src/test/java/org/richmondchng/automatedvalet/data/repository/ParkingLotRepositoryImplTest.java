@@ -17,6 +17,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -25,7 +27,7 @@ import static org.mockito.Mockito.when;
 /**
  * Unit test ParkingLotRepositoryImpl.
  *
- * @author richmondchng 
+ * @author richmondchng
  */
 @ExtendWith(MockitoExtension.class)
 class ParkingLotRepositoryImplTest {
@@ -100,5 +102,31 @@ class ParkingLotRepositoryImplTest {
         assertEquals(4, result4.getLotNumber());
 
         verify(parkingLotDataStorage, times(1)).getByVehicleType(VehicleType.CAR);
+    }
+
+    /**
+     * Test getParkingLotByVehicleTypeOrderByLotNumber.
+     *
+     * Test modify list, throw exception
+     */
+    @Test
+    void getParkingLotByVehicleTypeOrderByLotNumber_modifyList_throwException() {
+        // return empty list
+        when(parkingLotDataStorage.getByVehicleType(any(VehicleType.class))).thenReturn(Arrays.asList(
+                ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(2).build(),
+                ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(4).build(),
+                ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(1).build(),
+                ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(3).build()
+        ));
+
+        final List<ParkingLotEntity> results = parkingLotRepository.getParkingLotByVehicleTypeOrderByLotNumber(VehicleType.CAR);
+
+        try {
+            results.add(ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(5).build());
+            fail("Expect exception to be thrown");
+        } catch(RuntimeException e) {
+            assertTrue(e instanceof UnsupportedOperationException);
+            verify(parkingLotDataStorage, times(1)).getByVehicleType(VehicleType.CAR);
+        }
     }
 }

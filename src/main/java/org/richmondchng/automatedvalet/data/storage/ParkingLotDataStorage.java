@@ -4,6 +4,7 @@ import org.richmondchng.automatedvalet.data.entity.ParkingLotEntity;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -31,7 +32,7 @@ public class ParkingLotDataStorage {
         if(configurations == null) {
             throw new InvalidParameterException("Configurations is null");
         }
-        final Map<VehicleType, List<ParkingLotEntity>> map = new HashMap<>(configurations.size());
+        parkingLots = new HashMap<>(configurations.size());
         for(Map.Entry<VehicleType, Integer> configuration : configurations.entrySet()) {
             final List<ParkingLotEntity> parkingList = new LinkedList<>();
             for(int index = 1; index <= configuration.getValue(); index++) {
@@ -40,9 +41,8 @@ public class ParkingLotDataStorage {
                         .lotNumber(index)
                         .build());
             }
-            map.put(configuration.getKey(), Collections.unmodifiableList(parkingList));
+            parkingLots.put(configuration.getKey(), Collections.unmodifiableList(parkingList));
         }
-        this.parkingLots = Collections.unmodifiableMap(map);
     }
 
     /**
@@ -54,10 +54,7 @@ public class ParkingLotDataStorage {
         if(vehicleType == null) {
             throw new InvalidParameterException("Vehicle type cannot be null");
         }
-        List<ParkingLotEntity> results = parkingLots.get(vehicleType);
-        if(results == null) {
-            return Collections.emptyList();
-        }
-        return results;
+        List<ParkingLotEntity> results = parkingLots.getOrDefault(vehicleType, new ArrayList<>());
+        return Collections.unmodifiableList(results);
     }
 }
