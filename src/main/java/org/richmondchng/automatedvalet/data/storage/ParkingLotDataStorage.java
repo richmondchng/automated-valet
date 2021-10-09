@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Mock data storage representing data storage for ParkingLotEntity.
+ * Data storage representing data storage for ParkingLotEntity.
  *
  * @author richmondchng
  */
