@@ -96,4 +96,13 @@ public class ParkingValetService {
                 .build();
     }
 
+    /**
+     * Remove vehicle.
+     * @param vehicleNumber license plate
+     * @param timestampOut timestamp exiting parking
+     * @return ParkingLot describing parking lot details
+     */
+    public ParkingLot removeVehicle(final String vehicleNumber, final LocalDateTime timestampOut) {
+        return null;
+    }
 }

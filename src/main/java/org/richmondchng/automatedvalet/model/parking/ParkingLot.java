@@ -1,6 +1,5 @@
 package org.richmondchng.automatedvalet.model.parking;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,10 +15,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 public class ParkingLot {
     private VehicleType vehicleType;
     private String label;
     private String vehicleNumber;
     private LocalDateTime timeIn;
+    private LocalDateTime timeOut;
 }
