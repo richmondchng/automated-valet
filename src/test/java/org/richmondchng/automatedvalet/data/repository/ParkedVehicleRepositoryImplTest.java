@@ -15,12 +15,16 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -73,6 +77,12 @@ class ParkedVehicleRepositoryImplTest {
     @Test
     void save_validEntity_saveSuccessful() {
 
+        doAnswer(invocationOnMock -> {
+            final ParkedVehicleEntity param = invocationOnMock.getArgument(0, ParkedVehicleEntity.class);
+            param.setId(UUID.randomUUID());
+            return param;
+        }).when(parkedVehicleDataStorage).save(any(ParkedVehicleEntity.class));
+
         // not required to test returned value, we want to test the parameter into the data storage
         parkedVehicleRepository.save(ParkedVehicleEntity.builder()
                 .vehicleType(VehicleType.CAR)
@@ -93,12 +103,12 @@ class ParkedVehicleRepositoryImplTest {
     }
 
     /**
-     * Test getParkedVehicleByVehicleType.
+     * Test findAllParkedVehiclesByVehicleType.
      *
      * Has no parked vehicle, return empty list
      */
     @Test
-    void getParkedVehicleByVehicleType_noParkedVehicle_returnEmptyList() {
+    void findAllParkedVehiclesByVehicleType_noParkedVehicle_returnEmptyList() {
         when(parkedVehicleDataStorage.getParkedVehiclesByVehicleType(any(VehicleType.class))).thenReturn(Collections.emptyList());
 
         final List<ParkedVehicleEntity> results = parkedVehicleRepository.findAllParkedVehiclesByVehicleType(VehicleType.CAR);
@@ -110,12 +120,12 @@ class ParkedVehicleRepositoryImplTest {
     }
 
     /**
-     * Test getParkedVehicleByVehicleType.
+     * Test findAllParkedVehiclesByVehicleType.
      *
      * Has parked vehicles, return list
      */
     @Test
-    void getParkedVehicleByVehicleType_hasParkedVehicles_returnList() {
+    void findAllParkedVehiclesByVehicleType_hasParkedVehicles_returnList() {
         when(parkedVehicleDataStorage.getParkedVehiclesByVehicleType(any(VehicleType.class))).thenReturn(Arrays.asList(
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("ABC1234T").build(),
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("DEF2234U").build()
@@ -132,12 +142,12 @@ class ParkedVehicleRepositoryImplTest {
     }
 
     /**
-     * Test getParkedVehicleByVehicleType.
+     * Test findAllParkedVehiclesByVehicleType.
      *
      * Test modify list, throw exception
      */
     @Test
-    void getParkedVehicleByVehicleType_modifyList_throwException() {
+    void findAllParkedVehiclesByVehicleType_modifyList_throwException() {
         when(parkedVehicleDataStorage.getParkedVehiclesByVehicleType(any(VehicleType.class))).thenReturn(Arrays.asList(
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("ABC1234T").build(),
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("DEF2234U").build()
@@ -152,5 +162,44 @@ class ParkedVehicleRepositoryImplTest {
             assertTrue(e instanceof UnsupportedOperationException);
             verify(parkedVehicleDataStorage, times(1)).getParkedVehiclesByVehicleType(VehicleType.CAR);
         }
+    }
+
+    /**
+     * Test findParkedVehicleByVehicleNumber.
+     *
+     * Has no matching vehicle number, return null.
+     */
+    @Test
+    void findParkedVehicleByVehicleNumber_noMatch_returnNull() {
+        when(parkedVehicleDataStorage.getParkedVehicleByVehicleNumber(anyString())).thenReturn(null);
+
+        final ParkedVehicleEntity result = parkedVehicleRepository.findParkedVehicleByVehicleNumber("ABC1234T");
+        assertNull(result);
+    }
+
+    /**
+     * Test findParkedVehicleByVehicleNumber.
+     *
+     * Has matching vehicle number, return entity bean.
+     */
+    @Test
+    void findParkedVehicleByVehicleNumber_matchedVehicleNumber_returnEntity() {
+        when(parkedVehicleDataStorage.getParkedVehicleByVehicleNumber(anyString())).thenReturn(ParkedVehicleEntity.builder()
+                .id(UUID.randomUUID())
+                .vehicleType(VehicleType.CAR)
+                .vehicleNumber("ABC3456U")
+                .lotNumber(2)
+                .timeIn(LocalDateTime.of(2021, 5, 4, 10, 20, 1))
+                .timeOut(LocalDateTime.of(2021, 5, 4, 11, 20, 1))
+                .build());
+
+        final ParkedVehicleEntity result = parkedVehicleRepository.findParkedVehicleByVehicleNumber("ABC3456U");
+        assertNotNull(result);
+        assertNotNull(result.getId());
+        assertEquals(VehicleType.CAR, result.getVehicleType());
+        assertEquals("ABC3456U", result.getVehicleNumber());
+        assertEquals(2, result.getLotNumber());
+        assertNotNull(result.getTimeIn());
+        assertNotNull(result.getTimeOut());
     }
 }
