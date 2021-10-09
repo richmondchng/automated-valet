@@ -1,7 +1,7 @@
-package org.richmondchng.automatedvalet.model.parking;
+package org.richmondchng.automatedvalet.data.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
@@ -9,17 +9,18 @@ import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 import java.time.LocalDateTime;
 
 /**
- * Service bean describing a parked vehicle.
- * 
+ * Entity representing a parked vehicle.
  * @author richmondchng
  */
+@Data
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
-public class ParkingLot {
+public class ParkedVehicleEntity {
     private VehicleType vehicleType;
-    private String label;
     private String vehicleNumber;
+    private int lotNumber;
     private LocalDateTime timeIn;
+    private LocalDateTime timeOut;
+    private Integer parkingFee;
 }

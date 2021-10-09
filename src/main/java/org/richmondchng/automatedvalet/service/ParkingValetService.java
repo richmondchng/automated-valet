@@ -1,15 +1,20 @@
 package org.richmondchng.automatedvalet.service;
 
 import lombok.RequiredArgsConstructor;
-import org.richmondchng.automatedvalet.data.ParkingGarage;
+import org.richmondchng.automatedvalet.data.entity.ParkedVehicleEntity;
+import org.richmondchng.automatedvalet.data.entity.ParkingLotEntity;
+import org.richmondchng.automatedvalet.data.repository.ParkedVehicleRepository;
+import org.richmondchng.automatedvalet.data.repository.ParkingLotRepository;
 import org.richmondchng.automatedvalet.exception.VehicleAlreadyParkedException;
 import org.richmondchng.automatedvalet.model.parking.ParkingLot;
-import org.richmondchng.automatedvalet.model.vehicle.Vehicle;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 
 import java.security.InvalidParameterException;
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Parking valet service.
@@ -19,7 +24,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ParkingValetService {
 
-    private final ParkingGarage parkingGarage;
+    private final ParkingLotRepository parkingLotRepository;
+    private final ParkedVehicleRepository parkedVehicleRepository;
+
+    // parking lot label e.g. CarLot1, CarLot2, etc..., MotorcycleLot1, MotorcycleLot2, etc...
+    private static final String PARKING_LOT_LABEL = "{0}Lot{1}";
 
     /**
      * Park vehicle.
@@ -39,29 +48,52 @@ public class ParkingValetService {
             throw new InvalidParameterException("Time in is required");
         }
 
-        // get list of parking lots for vehicle type
-        final List<ParkingLot> parkingLotList = parkingGarage.getByVehicleType(vehicleType);
+        // get list of parked vehicles
+        final List<ParkedVehicleEntity> parkedVehicleList = parkedVehicleRepository.getParkedVehicleByVehicleType(vehicleType);
+        // set containing set of parked vehicle numbers
+        final Set<String> parkedVehicleNumbers = parkedVehicleList.stream().map(ParkedVehicleEntity::getVehicleNumber)
+                .collect(Collectors.toSet());
+        // check if vehicle is already parked
+        if(parkedVehicleNumbers.contains(vehicleNumber)) {
+            throw new VehicleAlreadyParkedException(vehicleType, vehicleNumber);
+        }
 
+        // get list of parking lots for vehicle type
+        final List<ParkingLotEntity> parkingLotList = parkingLotRepository.getParkingLotByVehicleTypeOrderByLotNumber(
+                vehicleType);
+        // set containing lot numbers that are already occupied
+        final Set<Integer> parkedLotNumbers = parkedVehicleList.stream().map(ParkedVehicleEntity::getLotNumber)
+                .collect(Collectors.toSet());
         // find the first available parking lot
-        ParkingLot availableLot = null;
-        for(ParkingLot parkingLot : parkingLotList) {
-            if(parkingLot.getTimeIn() != null && parkingLot.getVehicle() != null) {
-                // parking lot is filled
-                if(parkingLot.getVehicle().getVehicleNumber().equalsIgnoreCase(vehicleNumber)) {
-                    // has same vehicle number
-                    throw new VehicleAlreadyParkedException(vehicleType, vehicleNumber);
-                }
+        ParkingLotEntity availableLot = null;
+        for(ParkingLotEntity parkingLot : parkingLotList) {
+            if(parkedLotNumbers.contains(parkingLot.getLotNumber())) {
+                // parking lot is occupied
                 continue;
             }
-            if(availableLot == null) {
-                availableLot = parkingLot;
-            }
+            availableLot = parkingLot;
+            break;
         }
-        if(availableLot != null) {
-            // found available parking lot
-            availableLot.setTimeIn(timestampIn);
-            availableLot.setVehicle(new Vehicle(vehicleType, vehicleNumber));
+
+        if(availableLot == null) {
+            return null;
         }
-        return availableLot;
+        // saved parked vehicle details
+        final ParkedVehicleEntity parkedVehicleEntity = parkedVehicleRepository.save(ParkedVehicleEntity.builder()
+                .vehicleType(vehicleType)
+                .vehicleNumber(vehicleNumber)
+                .lotNumber(availableLot.getLotNumber())
+                .timeIn(timestampIn)
+                .build());
+
+        // create service bean to return details
+        return ParkingLot.builder()
+                .vehicleType(parkedVehicleEntity.getVehicleType())
+                .vehicleNumber(parkedVehicleEntity.getVehicleNumber())
+                .label(MessageFormat.format(PARKING_LOT_LABEL, parkedVehicleEntity.getVehicleType().getLabel(),
+                        parkedVehicleEntity.getLotNumber()))
+                .timeIn(parkedVehicleEntity.getTimeIn())
+                .build();
     }
+
 }

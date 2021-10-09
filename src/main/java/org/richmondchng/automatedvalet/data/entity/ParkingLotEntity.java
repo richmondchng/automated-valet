@@ -1,6 +1,5 @@
 package org.richmondchng.automatedvalet.data.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -16,7 +15,6 @@ import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 public class ParkingLotEntity {
     private VehicleType vehicleType;
     private int lotNumber;

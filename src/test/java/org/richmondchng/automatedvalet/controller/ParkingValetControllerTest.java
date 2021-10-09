@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.richmondchng.automatedvalet.dto.response.ParkedDTO;
 import org.richmondchng.automatedvalet.model.parking.ParkingLot;
-import org.richmondchng.automatedvalet.model.vehicle.Vehicle;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 import org.richmondchng.automatedvalet.service.ParkingValetService;
 
@@ -59,7 +58,7 @@ class ParkingValetControllerTest {
         final LocalDateTime timeIn = LocalDateTime.of(2021, 10, 8, 13, 10, 11);
         final ParkingLot parked = ParkingLot.builder()
                 .vehicleType(VehicleType.CAR)
-                .vehicle(new Vehicle(VehicleType.CAR, vehicleNumber))
+                .vehicleNumber(vehicleNumber)
                 .timeIn(timeIn)
                 .label("CarLot1")
                 .build();
