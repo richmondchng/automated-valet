@@ -32,7 +32,21 @@ public class ParkingLotRepositoryImpl implements ParkingLotRepository {
         return parkingLotEntityList.stream()
                 // sort by lot number (natural order ascending)
                 .sorted(Comparator.comparing(ParkingLotEntity::getLotNumber))
+                // return a copy so that we don't inadvertently modify the actual data
+                .map(b -> copy(b))
                 // into an unmodifiable list
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    /**
+     * Make a copy of bean.
+     * @param src source
+     * @return copy of source
+     */
+    private ParkingLotEntity copy(final ParkingLotEntity src) {
+        return ParkingLotEntity.builder()
+                .vehicleType(src.getVehicleType())
+                .lotNumber(src.getLotNumber())
+                .build();
     }
 }

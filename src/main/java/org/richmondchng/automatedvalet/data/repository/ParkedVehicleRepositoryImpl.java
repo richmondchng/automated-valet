@@ -23,13 +23,14 @@ public class ParkedVehicleRepositoryImpl implements ParkedVehicleRepository {
 
     @Override
     public ParkedVehicleEntity save(final ParkedVehicleEntity parkedVehicleEntity) {
-        // return a copy
+        // return a copy so that we don't inadvertently modify the actual data
         return copy(parkedVehicleDataStorage.save(parkedVehicleEntity));
     }
 
     @Override
     public List<ParkedVehicleEntity> findAllParkedVehiclesByVehicleType(final VehicleType vehicleType) {
         return parkedVehicleDataStorage.getParkedVehiclesByVehicleType(vehicleType).stream()
+                // return a copy so that we don't inadvertently modify the actual data
                 .map(b -> copy(b)).collect(Collectors.toUnmodifiableList());
     }
 
@@ -37,6 +38,7 @@ public class ParkedVehicleRepositoryImpl implements ParkedVehicleRepository {
     public ParkedVehicleEntity findParkedVehicleByVehicleNumber(final String vehicleNumber) {
         final ParkedVehicleEntity entity = parkedVehicleDataStorage.getParkedVehicleByVehicleNumber(vehicleNumber);
         if(entity != null) {
+            // return a copy so that we don't inadvertently modify the actual data
             return copy(entity);
         }
         return null;
@@ -46,6 +48,7 @@ public class ParkedVehicleRepositoryImpl implements ParkedVehicleRepository {
     public ParkedVehicleEntity findById(final UUID id) {
         final ParkedVehicleEntity entity = parkedVehicleDataStorage.getRecordById(id);
         if(entity != null) {
+            // return a copy so that we don't inadvertently modify the actual data
             return copy(entity);
         }
         return null;
