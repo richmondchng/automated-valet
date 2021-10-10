@@ -7,8 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public abstract class Vehicle {
-    private String licensePlate;
-
-    public abstract VehicleType getVehicleType();
+public class Vehicle {
+    private final VehicleType vehicleType;
+    private final String vehicleNumber;
 }
