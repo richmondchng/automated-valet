@@ -123,7 +123,7 @@ class ParkingValetServiceTest {
                         ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(3).build(),
                         ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(4).build()
                 ));
-        when(parkedVehicleRepository.findAllParkedVehiclesByVehicleType(any(VehicleType.class))).thenReturn(Arrays.asList(
+        when(parkedVehicleRepository.findAllParkedVehicles()).thenReturn(Arrays.asList(
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("ABC1234X").lotNumber(1)
                         .timeIn(LocalDateTime.now()).build(),
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("DBC2234X").lotNumber(2)
@@ -139,7 +139,7 @@ class ParkingValetServiceTest {
 
         verify(parkingLotRepository, times(1)).finalAllParkingLotsByVehicleTypeOrderByLotNumber(
                 VehicleType.CAR);
-        verify(parkedVehicleRepository, times(1)).findAllParkedVehiclesByVehicleType(VehicleType.CAR);
+        verify(parkedVehicleRepository, times(1)).findAllParkedVehicles();
         // no save action
         verify(parkedVehicleRepository, never()).save(any(ParkedVehicleEntity.class));
 
@@ -152,7 +152,7 @@ class ParkingValetServiceTest {
     @Test
     void parkVehicle_hasAvailableParking_VehicleAlreadyParked_throwException() {
         // vehicle is already parked in lot 2
-        when(parkedVehicleRepository.findAllParkedVehiclesByVehicleType(any(VehicleType.class))).thenReturn(Arrays.asList(
+        when(parkedVehicleRepository.findAllParkedVehicles()).thenReturn(Arrays.asList(
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("ABC1234X").lotNumber(1)
                         .timeIn(LocalDateTime.now()).build(),
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("DBC1234X").lotNumber(3)
@@ -167,7 +167,7 @@ class ParkingValetServiceTest {
             assertTrue(e instanceof VehicleAlreadyParkedException, e.getClass().getSimpleName() + " is thrown");
             assertEquals("Car DBC1234X is already parked", e.getMessage());
             verifyNoInteractions(parkingLotRepository);
-            verify(parkedVehicleRepository, times(1)).findAllParkedVehiclesByVehicleType(VehicleType.CAR);
+            verify(parkedVehicleRepository, times(1)).findAllParkedVehicles();
             verify(parkedVehicleRepository, never()).save(any(ParkedVehicleEntity.class));
         }
     }
@@ -185,7 +185,7 @@ class ParkingValetServiceTest {
                         ParkingLotEntity.builder().vehicleType(VehicleType.CAR).lotNumber(4).build()
                 ));
         // lot 2 and 4 are empty
-        when(parkedVehicleRepository.findAllParkedVehiclesByVehicleType(any(VehicleType.class))).thenReturn(Arrays.asList(
+        when(parkedVehicleRepository.findAllParkedVehicles()).thenReturn(Arrays.asList(
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("ABC1234X").lotNumber(1)
                         .timeIn(LocalDateTime.now()).build(),
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("DBC1234X").lotNumber(3)
@@ -201,7 +201,7 @@ class ParkingValetServiceTest {
 
         verify(parkingLotRepository, times(1)).finalAllParkingLotsByVehicleTypeOrderByLotNumber(
                 VehicleType.CAR);
-        verify(parkedVehicleRepository, times(1)).findAllParkedVehiclesByVehicleType(VehicleType.CAR);
+        verify(parkedVehicleRepository, times(1)).findAllParkedVehicles();
         // save entity bean
         final ArgumentCaptor<ParkedVehicleEntity> captor = ArgumentCaptor.forClass(ParkedVehicleEntity.class);
         verify(parkedVehicleRepository, times(1)).save(captor.capture());

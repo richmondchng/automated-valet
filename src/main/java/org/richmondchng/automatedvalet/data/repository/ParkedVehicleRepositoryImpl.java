@@ -3,7 +3,6 @@ package org.richmondchng.automatedvalet.data.repository;
 import lombok.RequiredArgsConstructor;
 import org.richmondchng.automatedvalet.data.entity.ParkedVehicleEntity;
 import org.richmondchng.automatedvalet.data.storage.ParkedVehicleDataStorage;
-import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,8 +27,8 @@ public class ParkedVehicleRepositoryImpl implements ParkedVehicleRepository {
     }
 
     @Override
-    public List<ParkedVehicleEntity> findAllParkedVehiclesByVehicleType(final VehicleType vehicleType) {
-        return parkedVehicleDataStorage.getParkedVehiclesByVehicleType(vehicleType).stream()
+    public List<ParkedVehicleEntity> findAllParkedVehicles() {
+        return parkedVehicleDataStorage.getParkedVehicles().stream()
                 // return a copy so that we don't inadvertently modify the actual data
                 .map(b -> copy(b)).collect(Collectors.toUnmodifiableList());
     }

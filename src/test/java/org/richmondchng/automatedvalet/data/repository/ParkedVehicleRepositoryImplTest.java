@@ -103,37 +103,37 @@ class ParkedVehicleRepositoryImplTest {
     }
 
     /**
-     * Test findAllParkedVehiclesByVehicleType.
+     * Test findAllParkedVehicles.
      *
      * Has no parked vehicle, return empty list
      */
     @Test
-    void findAllParkedVehiclesByVehicleType_noParkedVehicle_returnEmptyList() {
-        when(parkedVehicleDataStorage.getParkedVehiclesByVehicleType(any(VehicleType.class))).thenReturn(Collections.emptyList());
+    void findAllParkedVehicles_noParkedVehicle_returnEmptyList() {
+        when(parkedVehicleDataStorage.getParkedVehicles()).thenReturn(Collections.emptyList());
 
-        final List<ParkedVehicleEntity> results = parkedVehicleRepository.findAllParkedVehiclesByVehicleType(VehicleType.CAR);
+        final List<ParkedVehicleEntity> results = parkedVehicleRepository.findAllParkedVehicles();
 
-        verify(parkedVehicleDataStorage, times(1)).getParkedVehiclesByVehicleType(VehicleType.CAR);
+        verify(parkedVehicleDataStorage, times(1)).getParkedVehicles();
 
         assertNotNull(results);
         assertEquals(0, results.size());
     }
 
     /**
-     * Test findAllParkedVehiclesByVehicleType.
+     * Test findAllParkedVehicles.
      *
      * Has parked vehicles, return list
      */
     @Test
-    void findAllParkedVehiclesByVehicleType_hasParkedVehicles_returnList() {
-        when(parkedVehicleDataStorage.getParkedVehiclesByVehicleType(any(VehicleType.class))).thenReturn(Arrays.asList(
+    void findAllParkedVehicles_hasParkedVehicles_returnList() {
+        when(parkedVehicleDataStorage.getParkedVehicles()).thenReturn(Arrays.asList(
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("ABC1234T").build(),
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("DEF2234U").build()
         ));
 
-        final List<ParkedVehicleEntity> results = parkedVehicleRepository.findAllParkedVehiclesByVehicleType(VehicleType.CAR);
+        final List<ParkedVehicleEntity> results = parkedVehicleRepository.findAllParkedVehicles();
 
-        verify(parkedVehicleDataStorage, times(1)).getParkedVehiclesByVehicleType(VehicleType.CAR);
+        verify(parkedVehicleDataStorage, times(1)).getParkedVehicles();
 
         assertNotNull(results);
         assertEquals(2, results.size());
@@ -142,25 +142,25 @@ class ParkedVehicleRepositoryImplTest {
     }
 
     /**
-     * Test findAllParkedVehiclesByVehicleType.
+     * Test findAllParkedVehicles.
      *
      * Test modify list, throw exception
      */
     @Test
-    void findAllParkedVehiclesByVehicleType_modifyList_throwException() {
-        when(parkedVehicleDataStorage.getParkedVehiclesByVehicleType(any(VehicleType.class))).thenReturn(Arrays.asList(
+    void findAllParkedVehicles_modifyList_throwException() {
+        when(parkedVehicleDataStorage.getParkedVehicles()).thenReturn(Arrays.asList(
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("ABC1234T").build(),
                 ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("DEF2234U").build()
         ));
 
-        final List<ParkedVehicleEntity> results = parkedVehicleRepository.findAllParkedVehiclesByVehicleType(VehicleType.CAR);
+        final List<ParkedVehicleEntity> results = parkedVehicleRepository.findAllParkedVehicles();
 
         try {
             results.add(ParkedVehicleEntity.builder().vehicleType(VehicleType.CAR).vehicleNumber("ABC1299T").build());
             fail("Expect exception to be thrown");
         } catch(RuntimeException e) {
             assertTrue(e instanceof UnsupportedOperationException);
-            verify(parkedVehicleDataStorage, times(1)).getParkedVehiclesByVehicleType(VehicleType.CAR);
+            verify(parkedVehicleDataStorage, times(1)).getParkedVehicles();
         }
     }
 

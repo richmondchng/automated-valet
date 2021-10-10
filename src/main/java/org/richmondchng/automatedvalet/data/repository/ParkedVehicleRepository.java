@@ -1,7 +1,6 @@
 package org.richmondchng.automatedvalet.data.repository;
 
 import org.richmondchng.automatedvalet.data.entity.ParkedVehicleEntity;
-import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,10 +21,9 @@ public interface ParkedVehicleRepository {
 
     /**
      * Get list of parked vehicles by vehicle type. This returns entities that has vehicle number, time in, but without time out.
-     * @param vehicleType vehicle type
      * @return list of parked vehicles
      */
-    List<ParkedVehicleEntity> findAllParkedVehiclesByVehicleType(final VehicleType vehicleType);
+    List<ParkedVehicleEntity> findAllParkedVehicles();
 
     /**
      * Find vehicle by vehicle number, and time out is null.

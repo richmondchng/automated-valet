@@ -1,7 +1,6 @@
 package org.richmondchng.automatedvalet.data.storage;
 
 import org.richmondchng.automatedvalet.data.entity.ParkedVehicleEntity;
-import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 
 import java.security.InvalidParameterException;
 import java.text.MessageFormat;
@@ -63,16 +62,12 @@ public class ParkedVehicleDataStorage {
 
     /**
      * Get list of parked vehicles by vehicle type.
-     * @param vehicleType vehicle type
      * @return unmodifiable list of ParkedVehicleEntity beans
      */
-    public List<ParkedVehicleEntity> getParkedVehiclesByVehicleType(final VehicleType vehicleType) {
-        if(vehicleType == null) {
-            throw new InvalidParameterException("VehicleType cannot be null");
-        }
+    public List<ParkedVehicleEntity> getParkedVehicles() {
         // return an unmodifiable list
         return parkedVehiclesEntities.stream()
-                .filter(b -> vehicleType.equals(b.getVehicleType()) && b.getTimeOut() == null)
+                .filter(b -> b.getTimeOut() == null)
                 .collect(Collectors.toUnmodifiableList());
     }
 

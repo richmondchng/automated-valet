@@ -59,7 +59,7 @@ class ParkedVehicleDataStorageTest {
     @Test
     void save_validEntity_saveSuccessful() {
         // before save, ensure 0 items in list
-        assertEquals(0, parkedVehicleDataStorage.getParkedVehiclesByVehicleType(VehicleType.CAR).size());
+        assertEquals(0, parkedVehicleDataStorage.getParkedVehicles().size());
 
         final ParkedVehicleEntity result = parkedVehicleDataStorage.save(ParkedVehicleEntity.builder()
                 .vehicleType(VehicleType.CAR)
@@ -68,7 +68,7 @@ class ParkedVehicleDataStorageTest {
                 .timeIn(LocalDateTime.of(2021, 5, 4, 10, 20, 1))
                 .build());
         // increase by 1
-        assertEquals(1, parkedVehicleDataStorage.getParkedVehiclesByVehicleType(VehicleType.CAR).size());
+        assertEquals(1, parkedVehicleDataStorage.getParkedVehicles().size());
 
         assertNotNull(result);
         assertNotNull(result.getId());
@@ -112,7 +112,7 @@ class ParkedVehicleDataStorageTest {
     @Test
     void save_invalidId_updateFailed() {
         // before save, ensure 0 items in list
-        assertEquals(0, parkedVehicleDataStorage.getParkedVehiclesByVehicleType(VehicleType.CAR).size());
+        assertEquals(0, parkedVehicleDataStorage.getParkedVehicles().size());
 
         final UUID id = UUID.randomUUID();
         try {
@@ -125,47 +125,31 @@ class ParkedVehicleDataStorageTest {
                     .build());
         } catch (RuntimeException e) {
             assertTrue(e instanceof InvalidParameterException);
-            assertEquals("Id " + id.toString() + " is invalid", e.getMessage());
+            assertEquals("Id " + id + " is invalid", e.getMessage());
         }
-        assertEquals(0, parkedVehicleDataStorage.getParkedVehiclesByVehicleType(VehicleType.CAR).size());
+        assertEquals(0, parkedVehicleDataStorage.getParkedVehicles().size());
     }
 
     /**
-     * Test getParkedVehiclesByVehicleType.
+     * Test getParkedVehicles.
      *
      * Return empty list.
      */
     @Test
-    void getParkedVehiclesByVehicleType_noBeans_returnEmptyList() {
-        final List<ParkedVehicleEntity> results = parkedVehicleDataStorage.getParkedVehiclesByVehicleType(VehicleType.CAR);
+    void getParkedVehicles_noBeans_returnEmptyList() {
+        final List<ParkedVehicleEntity> results = parkedVehicleDataStorage.getParkedVehicles();
         assertNotNull(results);
         assertEquals(0, results.size());
     }
 
     /**
-     * Test getParkedVehiclesByVehicleType.
-     *
-     * Invalid parameter, throw exception
-     */
-    @Test
-    void getParkedVehiclesByVehicleType_nullParameter_throwException() {
-        try {
-            parkedVehicleDataStorage.getParkedVehiclesByVehicleType(null);
-            fail("Expect exception to be thrown");
-        } catch (RuntimeException e) {
-            assertTrue(e instanceof InvalidParameterException);
-            assertEquals("VehicleType cannot be null", e.getMessage());
-        }
-    }
-
-    /**
-     * Test getParkedVehiclesByVehicleType.
+     * Test getParkedVehicles.
      *
      * Test unable to modify list
      */
     @Test
-    void getParkedVehiclesByVehicleType_addItemToList_throwException() {
-        final List<ParkedVehicleEntity> results = parkedVehicleDataStorage.getParkedVehiclesByVehicleType(VehicleType.CAR);
+    void getParkedVehicles_addItemToList_throwException() {
+        final List<ParkedVehicleEntity> results = parkedVehicleDataStorage.getParkedVehicles();
         try {
             results.add(ParkedVehicleEntity.builder().build());
             fail("Expect exception to be thrown");
@@ -175,20 +159,20 @@ class ParkedVehicleDataStorageTest {
     }
 
     /**
-     * Test getParkedVehiclesByVehicleType.
+     * Test getParkedVehicles.
      *
      * Test unable to modify list
      */
     @Test
-    void getParkedVehiclesByVehicleType_removeItemFromList_throwException() {
-        final ParkedVehicleEntity result = parkedVehicleDataStorage.save(ParkedVehicleEntity.builder()
+    void getParkedVehicles_removeItemFromList_throwException() {
+        parkedVehicleDataStorage.save(ParkedVehicleEntity.builder()
                 .vehicleType(VehicleType.CAR)
                 .vehicleNumber("ABC3456U")
                 .lotNumber(2)
                 .timeIn(LocalDateTime.of(2021, 5, 4, 10, 20, 1))
                 .build());
 
-        final List<ParkedVehicleEntity> results = parkedVehicleDataStorage.getParkedVehiclesByVehicleType(VehicleType.CAR);
+        final List<ParkedVehicleEntity> results = parkedVehicleDataStorage.getParkedVehicles();
         assertEquals(1, results.size());
 
         try {
@@ -197,32 +181,6 @@ class ParkedVehicleDataStorageTest {
         } catch (RuntimeException e) {
             assertTrue(e instanceof UnsupportedOperationException);
         }
-    }
-
-    /**
-     * Test getParkedVehiclesByVehicleType.
-     *
-     * Test only return same vehicle type
-     */
-    @Test
-    void getParkedVehiclesByVehicleType_hasParkedVehicle_returnMatchedTypeOnly() {
-        parkedVehicleDataStorage.save(ParkedVehicleEntity.builder()
-                .vehicleType(VehicleType.CAR)
-                .vehicleNumber("ABC3456U")
-                .lotNumber(2)
-                .timeIn(LocalDateTime.of(2021, 5, 4, 10, 20, 1))
-                .build());
-        parkedVehicleDataStorage.save(ParkedVehicleEntity.builder()
-                .vehicleType(VehicleType.MOTORCYCLE)
-                .vehicleNumber("MMM3456U")
-                .lotNumber(1)
-                .timeIn(LocalDateTime.of(2021, 5, 4, 10, 20, 1))
-                .build());
-
-        final List<ParkedVehicleEntity> results = parkedVehicleDataStorage.getParkedVehiclesByVehicleType(VehicleType.CAR);
-        assertNotNull(results);
-        assertEquals(1, results.size());
-        assertEquals("ABC3456U", results.get(0).getVehicleNumber());
     }
 
     /**
@@ -341,7 +299,7 @@ class ParkedVehicleDataStorageTest {
      */
     @Test
     void getRecordById_matchedId_returnBean() {
-        final ParkedVehicleEntity b1 = parkedVehicleDataStorage.save(ParkedVehicleEntity.builder()
+        parkedVehicleDataStorage.save(ParkedVehicleEntity.builder()
                 .vehicleType(VehicleType.CAR)
                 .vehicleNumber("ABC3456U")
                 .lotNumber(2)
