@@ -1,6 +1,8 @@
 package org.richmondchng.automatedvalet.util;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -24,5 +26,15 @@ public final class TimeUtil {
             hours = hours + 1;
         }
         return hours;
+    }
+
+    /**
+     * Convert ms since epoch to timestamp
+     * @param seconds seconds
+     * @return LocalDateTime
+     */
+    public static LocalDateTime convertSecondsToLocalDateTime(final long seconds) {
+        // skip nanoseconds
+        return LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds, 0), ZoneId.systemDefault());
     }
 }
