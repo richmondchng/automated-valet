@@ -51,8 +51,8 @@ public class ParkingValetService {
         }
 
         // get list of parked vehicles
-        final List<ParkedVehicleEntity> parkedVehicleList = parkedVehicleRepository.findAllParkedVehiclesByVehicleType(vehicleType);
-        // set containing set of parked vehicle numbers
+        final List<ParkedVehicleEntity> parkedVehicleList = parkedVehicleRepository.findAllParkedVehicles();
+        // set containing set of parked vehicle numbers (regardless of type)
         final Set<String> parkedVehicleNumbers = parkedVehicleList.stream().map(ParkedVehicleEntity::getVehicleNumber)
                 .collect(Collectors.toSet());
         // check if vehicle is already parked
@@ -63,8 +63,10 @@ public class ParkingValetService {
         // get list of parking lots for vehicle type
         final List<ParkingLotEntity> parkingLotList = parkingLotRepository.finalAllParkingLotsByVehicleTypeOrderByLotNumber(
                 vehicleType);
-        // set containing lot numbers that are already occupied
-        final Set<Integer> parkedLotNumbers = parkedVehicleList.stream().map(ParkedVehicleEntity::getLotNumber)
+        // set containing lot numbers that are already occupied by vehicle type
+        final Set<Integer> parkedLotNumbers = parkedVehicleList.stream()
+                .filter(b -> vehicleType.equals(b.getVehicleType()))
+                .map(ParkedVehicleEntity::getLotNumber)
                 .collect(Collectors.toSet());
         // find the first available parking lot
         ParkingLotEntity availableLot = null;
