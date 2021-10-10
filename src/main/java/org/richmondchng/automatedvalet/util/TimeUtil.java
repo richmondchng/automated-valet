@@ -2,7 +2,7 @@ package org.richmondchng.automatedvalet.util;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -35,6 +35,7 @@ public final class TimeUtil {
      */
     public static LocalDateTime convertSecondsToLocalDateTime(final long seconds) {
         // skip nanoseconds
-        return LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds, 0), ZoneId.systemDefault());
+        // default to SG timezone of +8 hours
+        return LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds, 0), ZoneOffset.ofHours(8));
     }
 }

@@ -56,6 +56,7 @@ class TimeUtilTest {
     @Test
     void convertToLocalDateTime() {
         final LocalDateTime result = TimeUtil.convertSecondsToLocalDateTime(1613541902L);
+        // this is currently fixed at SG+8 offset
         assertEquals(LocalDateTime.of(2021, 2, 17, 14, 5, 2), result);
     }
 }
