@@ -49,4 +49,14 @@ class TimeUtilTest {
         // 1 hour + 59min59sec
         assertEquals(2, TimeUtil.calculateHours(time1, time2));
     }
+
+    /**
+     * Test convertToLocalDateTime.
+     */
+    @Test
+    void convertToLocalDateTime() {
+        final LocalDateTime result = TimeUtil.convertSecondsToLocalDateTime(1613541902L);
+        // this is currently fixed at SG+8 offset
+        assertEquals(LocalDateTime.of(2021, 2, 17, 14, 5, 2), result);
+    }
 }
