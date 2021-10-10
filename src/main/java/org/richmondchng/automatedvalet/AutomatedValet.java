@@ -6,8 +6,11 @@ import org.richmondchng.automatedvalet.controller.ParkingValetController;
 import org.richmondchng.automatedvalet.dto.instruction.ValetInstruction;
 import org.richmondchng.automatedvalet.dto.response.ParkedDTO;
 import org.richmondchng.automatedvalet.dto.response.ParkingFeeDTO;
+import org.richmondchng.automatedvalet.file.FileInstructionReader;
+import org.richmondchng.automatedvalet.file.FileInstructionsDTO;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 
+import java.io.FileNotFoundException;
 import java.text.MessageFormat;
 
 /**
@@ -16,14 +19,43 @@ import java.text.MessageFormat;
  */
 public class AutomatedValet {
 
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws FileNotFoundException {
+//        if(args == null || args.length != 1) {
+//            throw new RuntimeException("Missing file parameter");
+//        }
+//        final String filePath = args[0];
+
+        final String filePath = "C:\\Development\\dev-env\\sample-data.txt";
+        final FileInstructionsDTO instructions = FileInstructionReader.readInstructions(filePath);
+
+        // build context
+        final AutomatedValet automatedValet = new AutomatedValet(
+                instructions.getNumberOfLots().get(VehicleType.CAR), 2,
+                instructions.getNumberOfLots().get(VehicleType.MOTORCYCLE), 1);
+        for(ValetInstruction instruction : instructions.getInstructions()) {
+            switch (instruction.getAction()) {
+                case ENTER:
+                    System.out.println(automatedValet.enterParking(instruction));
+                    break;
+                case EXIT:
+                    System.out.println(automatedValet.exitParking(instruction));
+                    break;
+            }
+        }
     }
 
     private static final String VEHICLE_PARKED = "Accept {0}";
     private static final String VEHICLE_NOT_PARKED = "Reject";
-    private static final String VEHICLE_EXIT = "{0} {1}";   // 0 = label, 1 = fee
+    private static final String VEHICLE_EXIT = "{0} {1}";   // 0 = label, 1 = fee per hour
     private final ParkingValetController parkingValetController;
 
+    /**
+     * Constructor.
+     * @param numCarLots number of lots for car
+     * @param feePerHourCar fee per hour for car
+     * @param numMotorcycleLots number of lots for motorcycle
+     * @param feePerHourMotorcycle fee per hour for motorcycle
+     */
     private AutomatedValet(final int numCarLots, final int feePerHourCar, final int numMotorcycleLots, final int feePerHourMotorcycle) {
         this(new ParkingLotConfiguration[]{
                 new ParkingLotConfiguration(VehicleType.CAR, numCarLots, feePerHourCar),
@@ -50,8 +82,10 @@ public class AutomatedValet {
         final ParkedDTO result = parkingValetController.enterParking(valetInstruction.getVehicleType(),
                 valetInstruction.getLicensePlate(), valetInstruction.getTimestamp());
         if(result.isAccepted()) {
+            // build output string
             return MessageFormat.format(VEHICLE_PARKED, result.getLotNumber());
         }
+        // reject
         return VEHICLE_NOT_PARKED;
     }
 
@@ -63,6 +97,7 @@ public class AutomatedValet {
     public String exitParking(final ValetInstruction valetInstruction) {
         final ParkingFeeDTO result = parkingValetController.exitParking(valetInstruction.getLicensePlate(),
                 valetInstruction.getTimestamp());
+        // build output string
         return MessageFormat.format(VEHICLE_EXIT, result.getLabel(), result.getParkingFee());
     }
 }
