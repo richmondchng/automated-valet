@@ -19,13 +19,17 @@ import java.text.MessageFormat;
  */
 public class AutomatedValet {
 
+    /**
+     * Main class. This should take 1 parameter which is the file path.
+     * @param args should include file path to data.
+     * @throws FileNotFoundException if file is invalid
+     */
     public static void main(final String[] args) throws FileNotFoundException {
-//        if(args == null || args.length != 1) {
-//            throw new RuntimeException("Missing file parameter");
-//        }
-//        final String filePath = args[0];
-
-        final String filePath = "C:\\Development\\dev-env\\sample-data.txt";
+        if(args == null || args.length != 1) {
+            throw new RuntimeException("Missing file parameter");
+        }
+        final String filePath = args[0];
+        // read file into instructions
         final FileInstructionsDTO instructions = FileInstructionReader.readInstructions(filePath);
 
         // build context
