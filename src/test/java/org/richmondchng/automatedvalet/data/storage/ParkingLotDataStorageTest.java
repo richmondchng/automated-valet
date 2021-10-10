@@ -1,9 +1,7 @@
-package org.richmondchng.automatedvalet.data;
+package org.richmondchng.automatedvalet.data.storage;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.richmondchng.automatedvalet.model.parking.ParkingLot;
+import org.richmondchng.automatedvalet.data.entity.ParkingLotEntity;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 
 import java.security.InvalidParameterException;
@@ -12,14 +10,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Unit test ParkingGarage.
+ * Unit test ParkingLotDataStorage.
  *
  * @author richmondchng
  */
-class ParkingGarageTest {
+class ParkingLotDataStorageTest {
 
     /**
      * Test constructor. Test configuration is required.
@@ -27,7 +28,7 @@ class ParkingGarageTest {
     @Test
     void constructor_nullConfiguration_throwException() {
         try {
-            new ParkingGarage(null);
+            new ParkingLotDataStorage(null);
             fail("Expect exception to be thrown");
         }catch(RuntimeException e) {
             assertTrue(e instanceof InvalidParameterException);
@@ -41,8 +42,8 @@ class ParkingGarageTest {
     @Test
     void constructor_hasConfiguration_returnObject() {
         final Map<VehicleType, Integer> config = new HashMap<>();
-        final ParkingGarage parkingGarage = new ParkingGarage(config);
-        assertNotNull(parkingGarage);
+        final ParkingLotDataStorage parkingLotDataStorage = new ParkingLotDataStorage(config);
+        assertNotNull(parkingLotDataStorage);
     }
 
     /**
@@ -52,9 +53,10 @@ class ParkingGarageTest {
     void getByVehicleType_addNewParkingLot_throwException() {
         final Map<VehicleType, Integer> config = new HashMap<>();
         config.put(VehicleType.CAR, 1);
-        final ParkingGarage parkingGarage = new ParkingGarage(config);
+        final ParkingLotDataStorage parkingLotDataStorage = new ParkingLotDataStorage(config);
         try {
-            parkingGarage.getByVehicleType(VehicleType.CAR).add(new ParkingLot(VehicleType.CAR, "test"));
+            parkingLotDataStorage.getByVehicleType(VehicleType.CAR).add(ParkingLotEntity.builder()
+                    .vehicleType(VehicleType.CAR).lotNumber(100).build());
             fail("Expect exception to be thrown");
         } catch(RuntimeException e) {
             assertTrue(e instanceof UnsupportedOperationException);
@@ -68,19 +70,17 @@ class ParkingGarageTest {
     void getByVehicleType_getList_returnConfiguredNumberOfParkingLots() {
         final Map<VehicleType, Integer> config = new HashMap<>();
         config.put(VehicleType.CAR, 2);
-        final ParkingGarage parkingGarage = new ParkingGarage(config);
+        final ParkingLotDataStorage parkingLotDataStorage = new ParkingLotDataStorage(config);
 
-        final List<ParkingLot> results = parkingGarage.getByVehicleType(VehicleType.CAR);
+        final List<ParkingLotEntity> results = parkingLotDataStorage.getByVehicleType(VehicleType.CAR);
         assertEquals(2, results.size());
 
-        final Iterator<ParkingLot> itr = results.iterator();
+        final Iterator<ParkingLotEntity> itr = results.iterator();
         int expectedIndex = 1;
         while(itr.hasNext()) {
-            final ParkingLot pl = itr.next();
+            final ParkingLotEntity pl = itr.next();
             assertEquals(VehicleType.CAR, pl.getVehicleType());
-            assertEquals("CarLot" + expectedIndex, pl.getLabel());
-            assertNull(pl.getVehicle());
-            assertNull(pl.getTimeIn());
+            assertEquals(expectedIndex, pl.getLotNumber());
             expectedIndex++;
         }
     }

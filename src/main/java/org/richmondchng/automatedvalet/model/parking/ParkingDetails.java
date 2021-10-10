@@ -1,24 +1,26 @@
 package org.richmondchng.automatedvalet.model.parking;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.richmondchng.automatedvalet.model.vehicle.Vehicle;
 import org.richmondchng.automatedvalet.model.vehicle.VehicleType;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
+/**
+ * Service bean describing a parked vehicle.
+ *
+ * @author richmondchng
+ */
 @Getter
 @Setter
 @Builder
-@RequiredArgsConstructor
-@AllArgsConstructor
-public class ParkingLot {
-    private final VehicleType vehicleType;
-    private final String label;
-    private Vehicle vehicle;
+public class ParkingDetails {
+    private UUID id;
+    private VehicleType vehicleType;
+    private String label;
+    private String vehicleNumber;
     private LocalDateTime timeIn;
     private LocalDateTime timeOut;
 }
