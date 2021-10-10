@@ -4,7 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.richmondchng.automatedvalet.config.ParkingLotConfiguration;
-import org.richmondchng.automatedvalet.dto.instruction.Action;
+import org.richmondchng.automatedvalet.dto.instruction.ValetAction;
 import org.richmondchng.automatedvalet.dto.instruction.ValetInstruction;
 import org.richmondchng.automatedvalet.exception.TimeOutBeforeTimeInException;
 import org.richmondchng.automatedvalet.exception.VehicleAlreadyParkedException;
@@ -130,7 +130,7 @@ class AutomatedValetIntegrationTest {
 
     private ValetInstruction enter(final VehicleType vehicleType, final String vehicleNumber, final long seconds) {
         return ValetInstruction.builder()
-                .action(Action.ENTER)
+                .action(ValetAction.ENTER)
                 .vehicleType(vehicleType)
                 .licensePlate(vehicleNumber)
                 .timestamp(TimeUtil.convertSecondsToLocalDateTime(seconds))
@@ -139,7 +139,7 @@ class AutomatedValetIntegrationTest {
 
     private ValetInstruction exit(final String vehicleNumber, final long seconds) {
         return ValetInstruction.builder()
-                .action(Action.EXIT)
+                .action(ValetAction.EXIT)
                 .licensePlate(vehicleNumber)
                 .timestamp(TimeUtil.convertSecondsToLocalDateTime(seconds))
                 .build();
